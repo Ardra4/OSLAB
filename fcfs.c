@@ -53,12 +53,11 @@ int main()
 	 printf("%d\t",wt[i]= ct[i]-at[i]-bt[i]);
         printf("\n");
 	twt += wt[i];
-	tat =wt[i]-bt[i];
-	
+	tat += (ct[i]-at[i]);
     }
     float att,awt;
     awt = twt/n;
-
+ 
     att = tat/n;
 
     printf("Avg. waiting time= %f\n",awt);
