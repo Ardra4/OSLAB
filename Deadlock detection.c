@@ -3,7 +3,8 @@
 int deadlock_detect(int no_r, int no_p, int alloc[no_p][no_r], int req[no_p][no_r], int avail[no_r])
 {
     int finish[no_p];
-    for (int i = 0; i < no_p; i++)finish[i]=0;
+    for (int i = 0; i < no_p; i++)
+        finish[i]=0;
     
     for (int i = 0; i < no_p; i++)
     {
