@@ -2,10 +2,18 @@
 
 void sjf(int at[], int bt[], int n)
 {
-    int process[n], ct[n], tat[n], wt[n], avg_tat = 0, avg_wt = 0, temp = 0;
+    int process[n], ct[n], tat[n], wt[n], temp_bt[n - 1];
+    float avg_tat = 0, avg_wt = 0, time = 0;
+
+    // Initialize process array
     for (int i = 0; i < n; i++)
-        process[i] = i;
-    for (int i = n - 1; i > 0; i--)//for finding the process at the first arrival time
+    {
+        process[i] = i + 1; // Process numbering starts from 1
+    }
+    for (int i = 1; i < n; i++)
+        temp_bt[i] = 0;
+
+    for (int i = n - 1; i > 0; i--) // for finding the process at the first arrival time
     {
         if (at[i] < at[i - 1])
         {
@@ -23,7 +31,10 @@ void sjf(int at[], int bt[], int n)
         }
     }
 
-    for (int i = 1; i < n; i++)//For sorting the burst time
+    time += bt[0];
+    ct[0] = time;
+
+    for (int i = 1; i < n; i++) // For sorting the burst time
     {
         for (int j = 1; j < n - i; j++)
         {
@@ -44,14 +55,9 @@ void sjf(int at[], int bt[], int n)
         }
     }
 
-    temp += bt[0];
-    ct[0] = temp;
-    avg_tat += tat[0] = ct[0] - at[0];
-    avg_wt += wt[0] = tat[0] - bt[0];
-
     for (int j = 1; j < n; j++)
     {
-        if (bt[j] == bt[j + 1])//For finding the process when two burst times becomes equal
+        if (bt[j] == bt[j + 1]) // For finding the process when two burst times becomes equal
         {
 
             if (at[j] > at[j + 1])
@@ -69,36 +75,58 @@ void sjf(int at[], int bt[], int n)
                 process[j + 1] = temp;
             }
         }
-        temp += bt[j];
-        ct[j] = temp;
-        avg_tat += tat[j] = ct[j] - at[j];
-        avg_wt += wt[j] = tat[j] - bt[j];
     }
 
+    for (int i = 1; i < n; i++)
+    {
+        for (int j = 1; j < n; j++)
+        {
+            if (at[j] <= time && temp_bt[j] == 0)
+            {
+                time += bt[j];
+                ct[j] = time;
+                tat[j] = ct[j] - at[j];
+                wt[j] = tat[j] - bt[j];
+                avg_tat += tat[j];
+                avg_wt += wt[j];
+                temp_bt[j] = 1;
+                break;
+            }
+        }
+    }
+    
+    tat[0] = ct[0] - at[0];
+    wt[0] = tat[0] - bt[0];
+    avg_tat += tat[0];
+    avg_wt += wt[0];
 
-
+    // Print the result table
     printf("P\tAT\tBT\tCT\tTAT\tWT\n");
-	for(int i=0;i<n;i++)
-	{
-		printf("P%d\t%d\t%d\t%d\t%d\t%d\n",process[i],at[i],bt[i],ct[i],tat[i],wt[i]);
-		avg_tat+=tat[i];
-		avg_wt+=wt[i];
-	}
-	printf("AVERAGE TURN AROUND TIME=%f\nAVERAGE WAITING TIME=%f",(float)avg_tat/n,(float)avg_wt/n);
-}
-
-void main()
-{
-    int n;
-    printf("ENTER THE NUMBER OF PROCCESSES:");
-    scanf("%d", &n);
-    int at[n], bt[n];
     for (int i = 0; i < n; i++)
     {
-        printf("\nENTER THE ARRIVAL TIME OF PROCCESS P%d:", i);
+        printf("P%d\t%d\t%d\t%d\t%d\t%d\n", process[i], at[i], bt[i], ct[i], tat[i], wt[i]);
+    }
+
+    // Print average turnaround time and average waiting time
+    printf("AVERAGE TURNAROUND TIME = %.2f\n", avg_tat / n);
+    printf("AVERAGE WAITING TIME = %.2f\n", avg_wt / n);
+}
+
+int main()
+{
+    int n;
+    printf("ENTER THE NUMBER OF PROCESSES:");
+    scanf("%d", &n);
+    int at[n], bt[n];
+
+    for (int i = 0; i < n; i++)
+    {
+        printf("\nENTER THE ARRIVAL TIME OF PROCESS P%d:", i + 1);
         scanf("%d", &at[i]);
-        printf("ENTER THE BURST TIME OF PROCCESS P%d:", i);
+        printf("ENTER THE BURST TIME OF PROCESS P%d:", i + 1);
         scanf("%d", &bt[i]);
     }
+
     sjf(at, bt, n);
+    return 0;
 }
